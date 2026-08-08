@@ -1,315 +1,602 @@
-# 🤖 Raspberry Pi Autonomous Robot System
+# Surveillance_Morphwalker
 
-## Project Overview
 
-This is a **complete autonomous robot system** built using Raspberry Pi 4B that demonstrates computer vision, autonomous navigation, object-based decision making, and servo-driven transformation mechanisms - all implemented in Python without ROS.
+## A Transformable Wheel–Leg Hybrid Robot for Disaster Rescue and Surveillance
 
-### 🌟 Key Features
-
-- **🚗 Autonomous Navigation**: Obstacle avoidance using 3 ultrasonic sensors
-- **📹 Live Camera Streaming**: Real-time video feed from Logitech C270 HD webcam
-- **🔍 Dual Object Detection**: YOLO-based + color-based cube/marker detection
-- **🎯 Object-Based Actions**: Automatic stop, turn, and count based on detected objects
-- **🦾 Servo Transformation**: Mechanical leg-to-wheel transformation triggered by detection
-- **🌐 Web Interface**: Beautiful dashboard for monitoring and control
-- **🎮 Multiple Modes**: Autonomous, Stream, Detection, Manual control
+<p align="center">
+  <b>One Robot. Two Locomotion Modes. Built for Mixed Terrain.</b>
+</p>
 
 ---
 
-## 📦 Project Structure
+## 📌 Overview
 
+**Surveillance MorphWalker** is a compact transformable wheel–leg hybrid robot designed for **disaster rescue, surveillance, inspection, and hazardous-environment exploration**.
+
+The robot combines the speed and efficiency of wheeled locomotion with the terrain adaptability of legged locomotion. It can transform between **wheel mode** and **leg mode** using a servo-actuated four-bar linkage mechanism, allowing it to adapt to different terrain conditions.
+
+An onboard **Raspberry Pi 4** provides real-time vision processing and surveillance, while a distributed **ESP32-based control architecture** manages locomotion and mechanical transformation.
+
+The system is designed as an affordable and locally maintainable robotic platform using commercially available components and 3D-printed structural parts.
+
+---
+
+## 🎯 Problem Statement
+
+Disaster environments such as earthquakes, floods, landslides, and building collapses contain unstable and unpredictable terrain.
+
+Conventional robotic platforms have important limitations:
+
+* **Wheeled robots** are fast and efficient but struggle with rubble, steps, and uneven terrain.
+* **Legged robots** can negotiate difficult terrain but are comparatively slow and complex.
+* **Human rescuers** may be exposed to unstable structures, toxic environments, and other hazards during initial reconnaissance.
+* Existing surveillance robots may provide visual information but lack adaptive locomotion and physical interaction capabilities.
+
+Therefore, there is a need for a robotic platform that can:
+
+* Traverse mixed and unpredictable terrain.
+* Provide continuous visual surveillance.
+* Adapt its locomotion according to terrain conditions.
+* Reduce human exposure to hazardous environments.
+* Remain affordable, repairable, and locally maintainable.
+
+---
+
+## 💡 Proposed Solution
+
+MorphWalker addresses these challenges by combining two locomotion modes in a single robotic platform.
+
+### 🛞 Wheel Mode
+
+Used for:
+
+* Flat terrain
+* Semi-flat terrain
+* Faster movement
+* Efficient traversal
+
+### 🦿 Leg Mode
+
+Used for:
+
+* Rubble
+* Steps
+* Uneven terrain
+* Obstacles
+* Rough surfaces
+
+The robot uses a **servo-driven four-bar linkage mechanism** to transform the wheel structure into a leg configuration.
+
+```text
+              MORPHWALKER
+                   │
+          ┌────────┴────────┐
+          │                 │
+          ▼                 ▼
+     WHEEL MODE         LEG MODE
+          │                 │
+     Fast movement     Obstacle traversal
+     Flat terrain      Uneven terrain
+          │                 │
+          └────────┬────────┘
+                   │
+            Adaptive Mobility
 ```
-MiniProject/
-├── main.py                      # Main integration hub
-├── motor_control.py             # Motor control (IBT_02 + L298N)
-├── camera_stream.py             # Camera capture
-├── detector.py                  # YOLO detection
-├── controller.py                # Autonomous navigation
-├── stream_server.py             # Flask web server
-├── object_action_handler.py     # Object actions & servo ⭐ NEW
+
+---
+
+## ⚙️ Key Features
+
+* Transformable wheel–leg locomotion
+* Servo-driven four-bar linkage mechanism
+* Raspberry Pi 4 onboard processing
+* Real-time camera surveillance
+* OpenCV-based vision processing
+* Object and obstacle detection
+* Distributed ESP32 control architecture
+* Wireless human-supervised operation
+* Real-time video streaming
+* 3D-printed mechanical components
+* Modular design
+* Low-cost and locally maintainable architecture
+
+---
+
+## 🏗️ System Architecture
+
+The robot follows a hierarchical distributed architecture.
+
+```text
+                  ┌───────────────────┐
+                  │      CAMERA       │
+                  └─────────┬─────────┘
+                            │
+                            ▼
+                  ┌───────────────────┐
+                  │   RASPBERRY PI 4  │
+                  │                   │
+                  │ Vision Processing  │
+                  │ Object Detection  │
+                  │ Decision Making    │
+                  │ Video Streaming    │
+                  └─────────┬─────────┘
+                            │
+                            ▼
+                  ┌───────────────────┐
+                  │    MASTER ESP32   │
+                  │                   │
+                  │ Motion Coordinator│
+                  └─────────┬─────────┘
+                            │
+              ┌─────────────┼─────────────┐
+              │             │             │
+              ▼             ▼             ▼
+        ┌──────────┐  ┌──────────┐  ┌──────────┐
+        │ Slave    │  │ Slave    │  │ Slave    │
+        │ ESP32    │  │ ESP32    │  │ ESP32    │
+        └────┬─────┘  └────┬─────┘  └────┬─────┘
+             │             │             │
+             └─────────────┼─────────────┘
+                           │
+                           ▼
+                    Wheel Modules
+```
+
+### Raspberry Pi
+
+The Raspberry Pi acts as the high-level processing unit.
+
+Responsibilities include:
+
+* Camera processing
+* Object detection
+* Video streaming
+* High-level decision making
+* Robot state monitoring
+* Communication with the ESP32 control system
+
+### Master ESP32
+
+The Master ESP32 coordinates the low-level robotic system.
+
+Responsibilities include:
+
+* Receiving commands
+* Coordinating locomotion
+* Synchronizing wheel transformation
+* Communicating with slave controllers
+
+### Slave ESP32 Controllers
+
+The slave controllers manage individual wheel modules.
+
+Responsibilities include:
+
+* DC motor control
+* Servo control
+* Wheel transformation
+* Local actuator control
+
+---
+
+## 🔄 Wheel-to-Leg Transformation
+
+Each wheel incorporates a **four-bar linkage mechanism** driven by a servo motor.
+
+The transformation process changes the wheel from a compact circular configuration into an expanded leg-like configuration.
+
+```text
+WHEEL MODE
+     ↓
+Servo Actuation
+     ↓
+Linkage Expansion
+     ↓
+LEG MODE
+```
+
+When the terrain is suitable for wheeled traversal, the robot remains in wheel mode.
+
+When an obstacle or uneven terrain is detected, the transformation mechanism can be activated to improve terrain adaptability.
+
+---
+
+## 👁️ Vision System
+
+A camera connected to the Raspberry Pi provides real-time environmental information.
+
+The vision pipeline uses **OpenCV** for image processing.
+
+### Vision Pipeline
+
+```text
+Camera
+   ↓
+Frame Acquisition
+   ↓
+Image Preprocessing
+   ↓
+Edge / Contour Detection
+   ↓
+Obstacle Identification
+   ↓
+Terrain Assessment
+   ↓
+Movement / Transformation Decision
+```
+
+The system can perform:
+
+* Real-time camera streaming
+* Object detection
+* Obstacle detection
+* Terrain analysis
+* Environmental monitoring
+
+The project documentation reports an average vision-processing performance of approximately **18 FPS** during testing.
+
+---
+
+## 🧭 Autonomous Navigation
+
+The navigation methodology uses environmental information to determine appropriate robot behavior.
+
+### Basic decision logic
+
+```text
+              Environment
+                   │
+                   ▼
+             Camera Input
+                   │
+                   ▼
+           Terrain Assessment
+                   │
+        ┌──────────┼──────────┐
+        │          │          │
+        ▼          ▼          ▼
+   Clear Path   Small       Large
+                Obstacle    Obstacle
+        │          │          │
+        ▼          ▼          ▼
+   Move Forward  Slow/     Transform
+                 Re-route   to Leg Mode
+```
+
+The intended behavior is:
+
+* Clear path → continue movement in wheel mode.
+* Small obstacle → slow down or re-route.
+* Large obstacle → activate wheel-to-leg transformation.
+* Uneven terrain → prioritize leg mode for stability.
+
+---
+
+## 🎮 Control Modes
+
+MorphWalker is designed around human-supervised robotic operation.
+
+### Autonomous Mode
+
+The robot uses environmental information for:
+
+* Navigation
+* Obstacle detection
+* Locomotion decisions
+* Transformation decisions
+
+### Remote Control Mode
+
+The operator controls the robot wirelessly.
+
+### Surveillance Mode
+
+The robot provides continuous visual monitoring while stationary or moving slowly.
+
+---
+
+## 🔧 Hardware Components
+
+| Component                     | Purpose                        |
+| ----------------------------- | ------------------------------ |
+| Raspberry Pi 4 Model B        | Central processing and control |
+| ESP32 Master                  | Motion coordination            |
+| ESP32 Slave Controllers       | Wheel-module control           |
+| MG995 Servo Motors            | Wheel-leg transformation       |
+| DC Gear Motors                | Locomotion                     |
+| IBT-2 Motor Driver            | Motor control                  |
+| USB Camera                    | Visual surveillance            |
+| FlySky Transmitter            | Wireless control               |
+| Li-Po Battery                 | Power supply                   |
+| Buck Converter                | Voltage regulation             |
+| PLA Filament                  | 3D-printed components          |
+| Bearings / Shafts / Fasteners | Mechanical assembly            |
+
+---
+
+## 💻 Software Stack
+
+| Software / Technology    | Purpose                        |
+| ------------------------ | ------------------------------ |
+| Python                   | Control and vision programming |
+| C++ / Embedded C         | ESP32 control                  |
+| OpenCV                   | Computer vision                |
+| YOLO                     | Object detection               |
+| Raspberry Pi OS / Ubuntu | Computing platform             |
+| Arduino IDE              | ESP32 development              |
+| Fusion 360 / SolidWorks  | CAD design                     |
+| Git                      | Version control                |
+| GitHub                   | Project repository             |
+
+---
+
+## 📊 Prototype Specifications
+
+| Parameter                       | Specification |
+| ------------------------------- | ------------: |
+| Transformation time             |  ~2–3 seconds |
+| Average transformation time     |  ~2.7 seconds |
+| Vision processing               |       ~18 FPS |
+| Weight                          |        3–5 kg |
+| Typical mixed-operation runtime |   ~28 minutes |
+| Continuous wheeled operation    |   ~35 minutes |
+| Continuous legged operation     |   ~22 minutes |
+| Structure                       |    3D-printed |
+| Primary material                |           PLA |
+
+---
+
+## 🧪 Experimental Results
+
+The prototype was evaluated for transformation, vision processing, autonomous navigation, and power performance.
+
+### Mechanical Transformation
+
+* Average transformation time: **2.7 ± 0.3 seconds**
+* Minimum transformation time: **2.2 seconds**
+* Maximum transformation time: **3.4 seconds**
+* Test cycles: **20**
+
+### Vision Processing
+
+* Average processing rate: **18 FPS**
+* Processing latency: approximately **65 ± 8 ms**
+
+### Obstacle Detection
+
+| Obstacle Type     | Detection Accuracy |
+| ----------------- | -----------------: |
+| Vertical Walls    |                98% |
+| Steps & Curbs     |                96% |
+| Small Objects     |                92% |
+| Irregular Terrain |                89% |
+
+### Autonomous Navigation
+
+| Test Section    | Success Rate |
+| --------------- | -----------: |
+| Flat Surface    |         100% |
+| Incline         |         100% |
+| Obstacle Field  |          90% |
+| Rough Terrain   |          80% |
+| Combined Course |          85% |
+
+---
+
+## 🔋 Power Performance
+
+Using the tested 12 V, 3300 mAh Li-Po battery:
+
+| Operating Condition     | Runtime |
+| ----------------------- | ------: |
+| Continuous wheel mode   | ~35 min |
+| Continuous leg mode     | ~22 min |
+| Typical mixed operation | ~28 min |
+| Intermittent operation  | 45+ min |
+
+---
+
+## 🧩 Project Development Phases
+
+### Phase 1 — Design
+
+* Requirement definition
+* Mechanical design
+* CAD modelling
+* Component selection
+* Software architecture
+
+### Phase 2 — Fabrication
+
+* 3D printing
+* Mechanical assembly
+* Electronics integration
+* Wiring
+* Initial testing
+
+### Phase 3 — Integration
+
+* ESP32 control
+* Raspberry Pi integration
+* Camera integration
+* Vision processing
+* Locomotion integration
+* Transformation testing
+
+### Phase 4 — Autonomous Operation
+
+* Environmental perception
+* Obstacle detection
+* Decision making
+* Adaptive locomotion
+* Autonomous transformation
+
+### Phase 5 — Future Development
+
+* Advanced perception
+* Sensor fusion
+* SLAM
+* Environmental sensing
+* Multi-robot coordination
+
+---
+
+## 🚀 Future Scope
+
+The platform can be extended with:
+
+* LiDAR-based SLAM
+* Thermal cameras
+* Gas and chemical sensors
+* Depth cameras
+* IMU integration
+* Advanced terrain classification
+* Improved autonomous navigation
+* Multi-robot coordination
+* Waterproofing
+* Ruggedized mechanical components
+* Energy optimization
+* Autonomous mission planning
+
+---
+
+## 🌍 Applications
+
+MorphWalker can be adapted for:
+
+### Disaster Response
+
+* Earthquake reconnaissance
+* Building-collapse inspection
+* Landslide response
+* Flood-zone inspection
+
+### Industrial Inspection
+
+* Hazardous-area inspection
+* Gas/chemical environments
+* Confined-space inspection
+* Infrastructure monitoring
+
+### Surveillance
+
+* Remote surveillance
+* Perimeter monitoring
+* Continuous visual inspection
+
+### Environmental Exploration
+
+* Difficult terrain exploration
+* Remote environmental monitoring
+* Hazardous-zone reconnaissance
+
+---
+
+## ⚠️ Current Limitations
+
+The current prototype has several limitations:
+
+* Limited battery endurance
+* Prototype-scale mechanical construction
+* Limited field testing
+* Vision performance can be affected by low-light or smoky environments
+* Full autonomous navigation requires further development
+* Self-righting capability is not currently implemented
+* Additional environmental sensors are required for advanced disaster-response applications
+
+---
+
+## 📁 Repository Structure
+
+```text
+Surveillance-MorphWalker/
 │
-├── requirements.txt
 ├── README.md
 │
-├── utils/
-│   ├── gpio_helper.py          # GPIO, motors, servo
-│   └── net_comm.py
+├── hardware/
+│   ├── esp32/
+│   ├── motors/
+│   ├── servos/
+│   └── wiring/
 │
-└── models/
-    └── yolov8n.pt              # Auto-downloaded
+├── software/
+│   ├── vision/
+│   ├── navigation/
+│   ├── control/
+│   └── streaming/
+│
+├── mechanical/
+│   ├── chassis/
+│   ├── wheel-leg/
+│   └── assemblies/
+│
+├── cad/
+│
+├── documentation/
+│
+├── images/
+│
+└── tests/
 ```
 
 ---
 
-## 🚀 Quick Start
+## 👥 Project Team
 
-### 1. Installation
+**Department of Robotics and Artificial Intelligence**
+**Bangalore Institute of Technology, Bengaluru**
 
-```bash
-# Update system
-sudo apt update && sudo apt upgrade -y
+| Team Member        | Role                                                                                   |
+| ------------------ | -------------------------------------------------------------------------------------- |
+| **Taksha Tangudu** | ROS2 & Gazebo Simulation, Robotic Arm and Wheel CAD Design, ESP32 Master–Slave Control |
+| **Vijhortha VS**   | Computer Vision & Perception, Raspberry Pi Programming                                 |
+| **Raja R**         | Electronics Management, Mechanical Assembly of Robot and Arm                           |
+| **Varun V**        | Mechanism Design, Robot & Arm Assembly, System Architecture Design                     |
 
-# Install dependencies
-pip install -r requirements.txt
 
-# Test individual modules
-python motor_control.py      # Test motors
-python camera_stream.py      # Test camera
-python controller.py         # Test sensors
-```
+### Project Guide
 
-### 2. Run the Robot
-
-```bash
-# Basic autonomous mode
-python main.py
-
-# With object detection
-python main.py --detection
-
-# Custom configuration
-python main.py --mode autonomous --speed 70 --port 8080
-```
-
-### 3. Access Web Interface
-
-```
-Open browser: http://<raspberry-pi-ip>:5000/
-```
+**Prof. Sunitha M. K.**
+Assistant Professor
+Department of Robotics and Artificial Intelligence
+Bangalore Institute of Technology
 
 ---
 
-## 🔧 Hardware Setup
+## 📚 References
 
-### Required Components
+1. R. Cao, J. Gu, C. Yu, and A. Rosendo, *"OmniWheg: An Omnidirectional Wheel-Leg Transformable Robot,"* IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), 2022.
 
-1. **Raspberry Pi 4 Model B** (4GB+ RAM)
-2. **Motor Driver**: BTS IBT_02 H-Bridge
-3. **Motors**: 2x DC Motors
-4. **Camera**: Logitech C270 HD Webcam
-5. **Sensors**: 3x HC-SR04 Ultrasonic
-6. **Servo**: Standard hobby servo
-7. **Power**: 7.4V-12V battery + 5V 3A for Pi
+2. L. Bai, X. Li, Y. Sun, J. Zheng, and X. Chen, *"A Wheel-Legged Mobile Robot with Adjustable Body Length for Rescue and Search,"* IEEE International Conference on Advanced Robotics and Mechatronics, 2021.
 
-### Pin Connections
+3. B. Katz, J. D. Carlo, and S. Kim, *"Mini Cheetah: A Platform for Pushing the Limits of Dynamic Quadruped Control,"* IEEE International Conference on Robotics and Automation, 2019.
 
-**IBT_02 Motor Driver:**
-```
-M1_RPWM → GPIO 12    M2_RPWM → GPIO 18
-M1_LPWM → GPIO 13    M2_LPWM → GPIO 19
-```
+4. I. Mertyuz, A. K. Tanyıldızı, B. Taşar, A. B. Tatar, and O. Yakut, *"Fuhar: A Transformable Wheel-Legged Hybrid Mobile Robot,"* Robotics and Autonomous Systems, 2020.
 
-**Ultrasonic Sensors:**
-```
-Front: TRIG=5,  ECHO=6
-Left:  TRIG=13, ECHO=19
-Right: TRIG=16, ECHO=20
-```
+5. W.-H. Chen, H.-S. Lin, Y.-M. Lin, and P.-C. Lin, *"TurboQuad: A Novel Leg–Wheel Transformable Robot with Smooth and Fast Behavioral Transitions,"* IEEE Transactions on Robotics, 2017.
 
-**Servo Motor:**
-```
-Signal → GPIO 25
-```
+6. Y.-S. Kim et al., *"Wheel Transformer: A Wheel-Leg Hybrid Robot with Passive Transformable Wheels,"* IEEE Transactions on Robotics, 2014.
+
+7. G. Bradski, *"The OpenCV Library,"* Dr. Dobb's Journal of Software Tools, 2000.
 
 ---
 
-## 🎮 Operation Modes
+## 📄 License
 
-### 1. Autonomous Mode
-```bash
-python main.py --mode autonomous
-```
-Full navigation with obstacle avoidance
+This project is developed for **academic, research, and educational purposes**.
 
-### 2. Stream Mode
-```bash
-python main.py --mode stream
-```
-Camera streaming only (no movement)
-
-### 3. Detection Mode
-```bash
-python main.py --mode detection --detection
-```
-Object detection with visual overlay
-
-### 4. Manual Mode
-```bash
-python main.py --mode manual
-```
-Web-based manual control
+The licensing terms for source code, CAD files, and hardware designs will be defined as the project repository is prepared for public release.
 
 ---
 
-## 🎯 Object-Based Actions
+## ⭐ Vision
 
-The robot can detect objects and perform automatic actions:
+> **MorphWalker is designed to put a robot where humans should not have to go first.**
 
-### YOLO Object Detection
-- **Person** → Stop robot
-- **Bottle/Cup** → Count objects
-- **Cell Phone** → Turn left
-- **Book** → Turn right
-
-### Color-Based Detection
-Detects colored cubes/markers:
-- Red, Blue, Green, Yellow
-
-### Servo Transformation
-- Triggers when object detected within 30cm
-- Opens mechanical transformation
-- Auto-closes after 3 seconds
-
-### Object Counting
-Tracks and counts detected objects in real-time
+By combining adaptive locomotion, real-time surveillance, and intelligent decision-making, MorphWalker aims to provide a safer and more versatile platform for inspection and disaster-response robotics.
 
 ---
 
-## 📚 Module Documentation
+# 🤖 Surveillance MorphWalker
 
-### main.py
-Central integration hub with 4 operation modes, web interface, and REST API.
-
-### motor_control.py
-Motor control supporting IBT_02 and L298N drivers with PWM speed control.
-
-### camera_stream.py
-Background camera capture with Logitech C270 support.
-
-### controller.py
-Autonomous navigation using 3 ultrasonic sensors.
-
-### stream_server.py
-Flask MJPEG streaming server with beautiful web UI.
-
-### object_action_handler.py ⭐ NEW
-- YOLO + color-based detection
-- Automatic actions (stop/turn/count)
-- Servo transformation trigger
-- Object counting
-
-### utils/gpio_helper.py
-- `MotorDriver`: L298N control
-- `IBTMotorDriver`: IBT_02 control
-- `UltrasonicSensor`: HC-SR04 interface
-- `WheelActuator`: Servo control
-
----
-
-## 🌐 Web Interface
-
-Access at `http://<pi-ip>:5000/`
-
-**Features:**
-- Live camera feed
-- Real-time sensor data
-- Control buttons
-- Detected objects list
-- System status
-- Object counts
-
-**API Endpoints:**
-- `GET /` - Dashboard
-- `GET /video` - MJPEG stream
-- `GET /api/status` - JSON status
-- `POST /api/control` - Robot control
-
----
-
-## ⚙️ Configuration
-
-### Command-Line Options
-
-```bash
-python main.py [OPTIONS]
-
---mode {autonomous,stream,detection,manual}
---port PORT              (default: 5000)
---speed SPEED            (default: 60)
---driver-type {L298N,IBT}
---detection              (enable detection)
---camera-width WIDTH
---camera-height HEIGHT
---camera-fps FPS
-```
-
-### Examples
-
-```bash
-# High-speed autonomous
-python main.py --speed 80
-
-# HD streaming
-python main.py --mode stream --camera-width 1280 --camera-height 720
-
-# IBT driver with detection
-python main.py --driver-type IBT --detection
-```
-
----
-
-## 🔍 Troubleshooting
-
-### Camera Not Working
-```bash
-ls /dev/video*
-python main.py --camera-device 1
-```
-
-### Motors Not Responding
-```bash
-python motor_control.py
-sudo usermod -a -G gpio $USER
-```
-
-### Low FPS
-```bash
-python main.py --camera-width 320 --camera-height 240
-```
-
----
-
-## 📝 Notes
-
-- Reduce camera resolution if FPS is low
-- Ensure Raspberry Pi has enough RAM for YOLO
-- Use 5V 3A power supply for Pi
-- Common ground for all components
-- Always call cleanup() to avoid GPIO locks
-
----
-
-## 🎓 Project Highlights
-
-**Total Code:** 2,000+ lines of Python
-**Modules:** 8 main modules
-**Features:** 20+ features
-**Documentation:** Comprehensive guides
-
-**Technologies:**
-- Computer Vision (OpenCV, YOLO)
-- Web Development (Flask, JavaScript)
-- Robotics (GPIO, PWM, Sensors)
-- Threading & Concurrency
-
----
-
-## 📞 Support
-
-Check documentation in artifacts directory:
-- `system_guide.md` - Complete guide
-- `quick_reference.md` - Quick commands
-- `architecture.md` - System design
-- `walkthrough.md` - Project overview
-
----
-
-## 🎉 Ready to Run!
-
-```bash
-python main.py --mode autonomous --detection
-```
-
-**Open:** `http://<raspberry-pi-ip>:5000/`
-
-**Happy Robotics! 🤖✨**
+### **Adaptive Mobility • Real-Time Surveillance • Intelligent Robotics**
