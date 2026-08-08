@@ -1,0 +1,19 @@
+opencv-python
+numpy
+flask
+RPi.GPIO
+imutils
+torch        # optional (only if using YOLO)
+matplotlib   # optional for debugging
+
+ultralytics
+pandas      # optional for data handling
+scikit-learn  # optional for machine learning tasks
+Pillow      # optional for image processing
+requests    # optional for making HTTP requests
+flask-cors  # optional for handling CORS in Flask
+gunicorn    # optional for deploying Flask apps
+tensorflow  # optional (only if using TensorFlow models)
+keras       # optional (only if using Keras models)
+sqlalchemy  # optional for database interactions
+psycopg2    # optional for PostgreSQL database interactions

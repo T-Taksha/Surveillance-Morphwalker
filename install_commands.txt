@@ -1,0 +1,39 @@
+# ============================================================
+# Direct Installation Commands for Conda Environment
+# ============================================================
+# Copy and paste these commands one by one into your terminal
+# Make sure 'myenv' conda environment is activated first!
+# ============================================================
+
+# Step 1: Activate your conda environment (if not already active)
+conda activate myenv
+
+# Step 2: Install core packages via conda
+conda install -y opencv numpy flask
+
+# Step 3: Install additional packages via pip
+pip install imutils flask-cors
+
+# Step 4: Install RPi.GPIO (will fail on Windows - that's OK)
+pip install RPi.GPIO
+
+# Step 5: Install YOLO for object detection (optional, large download)
+pip install ultralytics
+
+# Step 6: Verify installation
+python -c "import cv2, numpy, flask; print('✓ All core packages installed successfully!')"
+
+# ============================================================
+# Alternative: Install everything at once
+# ============================================================
+pip install opencv-python numpy flask imutils flask-cors ultralytics
+
+# ============================================================
+# Minimal Installation (if you want to skip YOLO)
+# ============================================================
+pip install opencv-python numpy flask imutils flask-cors
+
+# ============================================================
+# Check what's installed
+# ============================================================
+pip list | findstr "opencv numpy flask ultralytics imutils"

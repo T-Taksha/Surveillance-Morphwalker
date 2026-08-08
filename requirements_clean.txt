@@ -1,0 +1,29 @@
+# ============================================================
+# Core Dependencies (Required)
+# ============================================================
+opencv-python>=4.5.0
+numpy>=1.19.0
+flask>=2.0.0
+imutils>=0.5.4
+
+# RPi.GPIO - Required for Raspberry Pi (will fail on Windows - use mock)
+RPi.GPIO>=0.7.0; platform_machine == "armv7l" or platform_machine == "aarch64"
+
+# ============================================================
+# Object Detection (Recommended)
+# ============================================================
+ultralytics>=8.0.0  # YOLO v8 for object detection
+torch>=1.9.0        # PyTorch (required by ultralytics)
+
+# ============================================================
+# Optional Dependencies
+# ============================================================
+flask-cors>=3.0.10  # CORS support for web interface
+Pillow>=8.0.0       # Image processing
+requests>=2.25.0    # HTTP requests
+pandas>=1.2.0       # Data handling (optional)
+
+# ============================================================
+# Development/Testing (Optional)
+# ============================================================
+matplotlib>=3.3.0   # Visualization for debugging
